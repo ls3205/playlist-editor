@@ -4,17 +4,20 @@ interface SongsContextProps {
     children: React.ReactNode;
 }
 
+interface OpenSongListType extends Song {
+    playlists: {
+        playlistID: string,
+        addedAt: string,
+    }[];
+}
+
 interface SongsContextTypes {
-    openedSongs: Map<Song, { playlistID: string; addedAt: string }[]>;
-    setOpenedSongs: React.Dispatch<
-        React.SetStateAction<
-            Map<Song, { playlistID: string; addedAt: string }[]>
-        >
-    >;
+    openedSongs: OpenSongListType[];
+    setOpenedSongs: React.Dispatch<React.SetStateAction<OpenSongListType[]>>;
 }
 
 const SongsContextDefaultValues: SongsContextTypes = {
-    openedSongs: new Map(),
+    openedSongs: [],
     setOpenedSongs: () => {},
 };
 
@@ -23,9 +26,7 @@ export const OpenedSongs = createContext<SongsContextTypes>(
 );
 
 const SongsContext: React.FC<SongsContextProps> = ({ children }) => {
-    const [openedSongs, setOpenedSongs] = useState<
-        Map<Song, { playlistID: string; addedAt: string }[]>
-    >(new Map());
+    const [openedSongs, setOpenedSongs] = useState<OpenSongListType[]>([]);
 
     return (
         <OpenedSongs.Provider value={{ openedSongs, setOpenedSongs }}>

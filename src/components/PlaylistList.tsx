@@ -47,9 +47,9 @@ const PlaylistList: React.FC<PlaylistListProps> = ({ session }) => {
                 <ScrollArea className="w-auto h-full">
                     <div className="p-4 w-[351px]">
                         {
-                            data?.items.map((playlist) => {
+                            data?.items.map((playlist, key) => {
                                 return (
-                                    <Playlist playlist={playlist} session={session} />
+                                    <Playlist playlist={playlist} session={session} key={key} />
                                 )
                             })
                         }

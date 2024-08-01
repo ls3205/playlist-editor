@@ -1,7 +1,11 @@
 import { redirect } from "next/navigation";
+import Editor from "~/components/Editor";
 import PlaylistList from "~/components/PlaylistList";
-import TestThing from "~/components/TestThing";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "~/components/ui/Resizable";
+import Search from "~/components/Search";
+import {
+    ResizableHandle,
+    ResizablePanelGroup,
+} from "~/components/ui/Resizable";
 import UserInfo from "~/components/UserInfo";
 import { getServerAuthSession } from "~/server/auth";
 
@@ -15,18 +19,13 @@ export default async function HomePage() {
                 <PlaylistList session={session} />
             </div>
 
-            <ResizablePanelGroup direction="vertical" className="m-0 h-full w-full space-y-2 p-4 pl-2">
-                <ResizablePanel
-                    defaultSize={66}
-                    className="w-full rounded-md bg-secondary"
-                >
-                    <TestThing />
-                </ResizablePanel>
+            <ResizablePanelGroup
+                direction="vertical"
+                className="m-0 h-full w-full space-y-2 p-4 pl-2"
+            >
+                <Editor />
                 <ResizableHandle withHandle />
-                <ResizablePanel
-                    defaultSize={33}
-                    className="w-full rounded-md bg-secondary"
-                ></ResizablePanel>
+                <Search />
             </ResizablePanelGroup>
         </main>
     ) : (

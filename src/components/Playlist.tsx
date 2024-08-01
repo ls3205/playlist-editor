@@ -10,6 +10,7 @@ import axios from "axios";
 import { OpenedSongs } from "./context/SongsContext";
 import { Session } from "next-auth";
 import { OpenedPlaylists } from "./context/PlaylistHistoryContext";
+import { EditorLoadingContext } from "./context/EditorContext";
 
 interface PlaylistProps {
     playlist: SimplifiedPlaylist;
@@ -20,6 +21,7 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, session }) => {
     const { openPlaylists, setOpenPlaylists } = useContext(OpenPlaylists);
     const { playlistHistory, setPlaylistHistory } = useContext(OpenedPlaylists);
     const { openedSongs, setOpenedSongs } = useContext(OpenedSongs);
+    const { editorLoading, setEditorLoading } = useContext(EditorLoadingContext);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -27,6 +29,7 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, session }) => {
         mutationKey: ["OpenSongs"],
         mutationFn: async (playlist: SimplifiedPlaylist) => {
             setLoading(true);
+            setEditorLoading(true);
 
             let songs: PlaylistTrackObject[] = [];
             const { data }: { data: GetPlaylistSongsReturn } = await axios.get(
@@ -51,53 +54,19 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, session }) => {
         },
         onError: (err) => {
             setLoading(false);
+            setEditorLoading(false);
         },
         onSuccess: (data) => {
             data.map((TrackObject) => {
-                if (!openedSongs.has(TrackObject.track)) {
-                    setOpenedSongs(
-                        (openedSongs) =>
-                            new Map(
-                                openedSongs.set(TrackObject.track, [
-                                    {
-                                        playlistID: playlist.id,
-                                        addedAt: TrackObject.added_at,
-                                    },
-                                ]),
-                            ),
-                    );
+                if (openedSongs.map(song => song.id).includes(TrackObject.track.id)) {
+                    const index = openedSongs.map(song => song.id).indexOf(TrackObject.track.id)
+                    setOpenedSongs((openedSongs) => [...openedSongs.slice(0, index), {...TrackObject.track, playlists: [...(openedSongs[index]?.playlists as []), {playlistID: playlist.id, addedAt: TrackObject.added_at}]}, ...openedSongs.slice(index + 1)])
                 } else {
-                    const existingPlaylists = openedSongs.get(
-                        TrackObject.track,
-                    );
-
-                    if (
-                        !existingPlaylists?.includes({
-                            playlistID: playlist.id,
-                            addedAt: TrackObject.added_at,
-                        })
-                    ) {
-                        const newValue = [
-                            ...existingPlaylists!,
-                            {
-                                playlistID: playlist.id,
-                                addedAt: TrackObject.added_at,
-                            },
-                        ];
-
-                        setOpenedSongs(
-                            (openedSongs) =>
-                                new Map(
-                                    openedSongs.set(
-                                        TrackObject.track,
-                                        newValue,
-                                    ),
-                                ),
-                        );
-                    }
+                    setOpenedSongs((openedSongs) => [...openedSongs, {...TrackObject.track, playlists:[{playlistID: playlist.id, addedAt: TrackObject.added_at}]}])
                 }
-            });
+            })
             setLoading(false);
+            setEditorLoading(false);
         },
     });
 
