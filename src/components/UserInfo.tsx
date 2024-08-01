@@ -9,13 +9,14 @@ import { Button, buttonVariants } from "./ui/Button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/HoverCard";
 import { signOut } from "next-auth/react";
 import SignOut from "./SignOut";
+import { Session } from "next-auth";
 
-interface UserInfoProps {}
+interface UserInfoProps {
+    session: Session;
+}
 
-const UserInfo: React.FC<UserInfoProps> = async ({}) => {
-    const session = await getServerAuthSession();
-
-    return session?.user ? (
+const UserInfo: React.FC<UserInfoProps> = async ({ session }) => {
+    return (
         <div className="h-1/5 w-full rounded-md bg-secondary p-4">
             <div className="flex h-3/5 w-full flex-row">
                 <Avatar className="h-full w-auto">
@@ -51,8 +52,6 @@ const UserInfo: React.FC<UserInfoProps> = async ({}) => {
                 <SignOut />
             </div>
         </div>
-    ) : (
-        redirect("/sign-in")
     );
 };
 

@@ -6,7 +6,12 @@
 /** @type {import("next").NextConfig} */
 const config = {
     images: {
-        domains: ["upload.wikimedia.org", "i.scdn.co"],
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "**",
+            },
+        ],
     },
 };
 
