@@ -2,16 +2,21 @@
 
 import React, { useContext } from "react";
 import { OpenPlaylists } from "./context/PlaylistContext";
+import { OpenedSongs } from "./context/SongsContext";
 
 interface TestThingProps {}
 
 const TestThing: React.FC<TestThingProps> = ({}) => {
-    const { openPlaylists, setOpenPlaylists } = useContext(OpenPlaylists);
+    const { openedSongs, setOpenedSongs } = useContext(OpenedSongs);
 
     return (
-        <div>
-            {openPlaylists.map((playlist) => {
-                return <h1>{playlist.name}</h1>;
+        <div className="flex flex-col">
+            {[...openedSongs.keys()].map((song) => {
+                return (
+                    <h1>
+                        {song.name} {`${openedSongs.get(song)}`}
+                    </h1>
+                );
             })}
         </div>
     );

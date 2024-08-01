@@ -243,9 +243,9 @@ interface PlaylistTrackObject {
         id: string,
         type: "user",
         uri: string,
-        is_local: boolean,
-        track: Song[]
     }
+    is_local: boolean,
+    track: Song
 }
 
 interface SimplifiedPlaylist {
@@ -279,4 +279,14 @@ interface SimplifiedPlaylist {
     },
     type: "playlist",
     uri: string
+}
+
+interface GetPlaylistSongsReturn {
+    href: string,
+    limit: number,
+    next?: string,
+    offset: number,
+    previous?: string,
+    total: string,
+    items: PlaylistTrackObject[]
 }

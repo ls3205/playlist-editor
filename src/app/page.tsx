@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import PlaylistList from "~/components/PlaylistList";
 import TestThing from "~/components/TestThing";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "~/components/ui/Resizable";
 import UserInfo from "~/components/UserInfo";
 import { getServerAuthSession } from "~/server/auth";
 
@@ -13,10 +14,20 @@ export default async function HomePage() {
                 <UserInfo session={session} />
                 <PlaylistList session={session} />
             </div>
-            <div className="m-0 h-full w-full space-y-2 p-4 pl-2">
-                <div className="h-2/3 w-full rounded-md bg-secondary"><TestThing /></div>
-                <div className="h-[calc(33.33%-8px)] w-full rounded-md bg-secondary"></div>
-            </div>
+
+            <ResizablePanelGroup direction="vertical" className="m-0 h-full w-full space-y-2 p-4 pl-2">
+                <ResizablePanel
+                    defaultSize={66}
+                    className="w-full rounded-md bg-secondary"
+                >
+                    <TestThing />
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel
+                    defaultSize={33}
+                    className="w-full rounded-md bg-secondary"
+                ></ResizablePanel>
+            </ResizablePanelGroup>
         </main>
     ) : (
         redirect("/sign-in")

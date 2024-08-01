@@ -1,8 +1,10 @@
-"use client"
+"use client";
 
 import React from "react";
 import PlaylistContext from "./context/PlaylistContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import SongsContext from "./context/SongsContext";
+import PlaylistHistoryContext from "./context/PlaylistHistoryContext";
 
 interface ProvidersProps {
     children: React.ReactNode;
@@ -19,7 +21,11 @@ const queryClient = new QueryClient({
 const Providers: React.FC<ProvidersProps> = ({ children }) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <PlaylistContext>{children}</PlaylistContext>
+            <PlaylistContext>
+                <PlaylistHistoryContext>
+                    <SongsContext>{children}</SongsContext>
+                </PlaylistHistoryContext>
+            </PlaylistContext>
         </QueryClientProvider>
     );
 };

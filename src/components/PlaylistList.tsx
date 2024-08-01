@@ -49,7 +49,7 @@ const PlaylistList: React.FC<PlaylistListProps> = ({ session }) => {
                         {
                             data?.items.map((playlist) => {
                                 return (
-                                    <Playlist playlist={playlist} />
+                                    <Playlist playlist={playlist} session={session} />
                                 )
                             })
                         }
