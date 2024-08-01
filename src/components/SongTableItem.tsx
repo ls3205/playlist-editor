@@ -1,19 +1,158 @@
 "use client";
 
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { TableCell, TableRow } from "./ui/Table";
 import Image from "next/image";
 import { OpenPlaylists } from "./context/PlaylistContext";
 import { OpenedSongs } from "./context/SongsContext";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "./ui/Checkbox";
+import { useMutation } from "@tanstack/react-query";
+import { Session } from "next-auth";
+import axios from "axios";
+import { Loader2 } from "lucide-react";
 
 interface SongTableItemProps {
     song: Song;
+    session: Session;
 }
 
-const SongTableItem: React.FC<SongTableItemProps> = ({ song }) => {
+const SongTableItem: React.FC<SongTableItemProps> = ({ song, session }) => {
     const { openPlaylists, setOpenPlaylists } = useContext(OpenPlaylists);
     const { openedSongs, setOpenedSongs } = useContext(OpenedSongs);
+
+    const [loadingIds, setLoadingIds] = useState<string[]>([]);
+
+    const { mutate: AddToPlaylist } = useMutation({
+        mutationKey: ["AddToPlaylist"],
+        mutationFn: async ({
+            song,
+            playlist,
+        }: {
+            song: Song;
+            playlist: SimplifiedPlaylist;
+        }) => {
+            setLoadingIds((loadingIds) => [...loadingIds, playlist.id]);
+
+            const { data } = await axios.post(
+                `${playlist.href}/tracks`,
+                {
+                    uris: [song.uri],
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${session.user.accessToken}`,
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+
+            return data as string;
+        },
+        onError: (err, variables) => {
+            console.log(err);
+            setLoadingIds(
+                loadingIds?.filter((id) => id !== variables.playlist.id),
+            );
+        },
+        onSuccess: (data, variables) => {
+            if (
+                openedSongs.map((song) => song.id).includes(variables.song.id)
+            ) {
+                const index = openedSongs
+                    .map((song) => song.id)
+                    .indexOf(variables.song.id);
+                setOpenedSongs((openedSongs) => [
+                    ...openedSongs.slice(0, index),
+                    {
+                        ...variables.song,
+                        playlists: [
+                            ...(openedSongs[index]?.playlists as []),
+                            {
+                                playlistID: variables.playlist.id,
+                                addedAt: new Date(Date.now()).toISOString(),
+                            },
+                        ],
+                    },
+                    ...openedSongs.slice(index + 1),
+                ]);
+            } else {
+                setOpenedSongs((openedSongs) => [
+                    ...openedSongs,
+                    {
+                        ...variables.song,
+                        playlists: [
+                            {
+                                playlistID: variables.playlist.id,
+                                addedAt: new Date(Date.now()).toISOString(),
+                            },
+                        ],
+                    },
+                ]);
+            }
+            setLoadingIds(
+                loadingIds?.filter((id) => id !== variables.playlist.id),
+            );
+        },
+    });
+
+    const { mutate: RemoveFromPlaylist } = useMutation({
+        mutationKey: ["RemoveFromPlaylist"],
+        mutationFn: async ({
+            song,
+            playlist,
+        }: {
+            song: Song;
+            playlist: SimplifiedPlaylist;
+        }) => {
+            setLoadingIds((loadingIds) => [...loadingIds, playlist.id]);
+
+            const { data } = await axios.delete(`${playlist.href}/tracks`, {
+                headers: {
+                    Authorization: `Bearer ${session.user.accessToken}`,
+                    "Content-Type": "application/json",
+                },
+                data: {
+                    tracks: [{ uri: song.uri }],
+                    snapshot_id: playlist.snapshot_id,
+                },
+            });
+
+            return data as string;
+        },
+        onError: (err, variables) => {
+            console.log(err);
+            setLoadingIds(
+                loadingIds?.filter((id) => id !== variables.playlist.id),
+            );
+        },
+        onSuccess: (data, variables) => {
+            const index = openedSongs
+                .map((song) => song.id)
+                .indexOf(variables.song.id);
+            const subindex = openedSongs[index]!.playlists.map(
+                (playlist) => playlist.playlistID,
+            ).indexOf(variables.playlist.id);
+            setOpenedSongs((openedSongs) => [
+                ...openedSongs.slice(0, index),
+                {
+                    ...song,
+                    playlists: [
+                        ...(openedSongs[index]?.playlists.slice(
+                            0,
+                            subindex,
+                        ) as []),
+                        ...(openedSongs[index]?.playlists.slice(
+                            subindex + 1,
+                        ) as []),
+                    ],
+                },
+                ...openedSongs.slice(index + 1),
+            ]);
+            setLoadingIds(
+                loadingIds?.filter((id) => id !== variables.playlist.id),
+            );
+        },
+    });
 
     return (
         <TableRow>
@@ -36,14 +175,32 @@ const SongTableItem: React.FC<SongTableItemProps> = ({ song }) => {
             {openPlaylists.map((playlist, key) => {
                 return (
                     <TableCell key={key}>
-                        <Checkbox
-                            checked={openedSongs
-                                .find((openedSong) => openedSong.id === song.id)
-                                ?.playlists.map(
-                                    (playlist) => playlist.playlistID,
-                                )
-                                .includes(playlist.id)}
-                        />
+                        {loadingIds?.includes(playlist.id) ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Checkbox
+                                checked={openedSongs
+                                    .find(
+                                        (openedSong) =>
+                                            openedSong.id === song.id,
+                                    )
+                                    ?.playlists.map(
+                                        (playlist) => playlist.playlistID,
+                                    )
+                                    .includes(playlist.id)}
+                                onCheckedChange={(state) => {
+                                    state
+                                        ? AddToPlaylist({
+                                              song,
+                                              playlist,
+                                          })
+                                        : RemoveFromPlaylist({
+                                              song,
+                                              playlist,
+                                          });
+                                }}
+                            />
+                        )}
                     </TableCell>
                 );
             })}

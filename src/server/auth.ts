@@ -96,7 +96,7 @@ export const authOptions: NextAuthOptions = {
 			clientId: process.env.SPOTIFY_CLIENT_ID!,
 			clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
 			authorization: 'https://accounts.spotify.com/authorize?' + new URLSearchParams({
-                scope: 'user-read-private user-read-email playlist-read-private',
+                scope: 'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private',
             }),
 		})
 	],

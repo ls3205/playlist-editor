@@ -21,7 +21,8 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, session }) => {
     const { openPlaylists, setOpenPlaylists } = useContext(OpenPlaylists);
     const { playlistHistory, setPlaylistHistory } = useContext(OpenedPlaylists);
     const { openedSongs, setOpenedSongs } = useContext(OpenedSongs);
-    const { editorLoading, setEditorLoading } = useContext(EditorLoadingContext);
+    const { editorLoading, setEditorLoading } =
+        useContext(EditorLoadingContext);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -58,13 +59,43 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, session }) => {
         },
         onSuccess: (data) => {
             data.map((TrackObject) => {
-                if (openedSongs.map(song => song.id).includes(TrackObject.track.id)) {
-                    const index = openedSongs.map(song => song.id).indexOf(TrackObject.track.id)
-                    setOpenedSongs((openedSongs) => [...openedSongs.slice(0, index), {...TrackObject.track, playlists: [...(openedSongs[index]?.playlists as []), {playlistID: playlist.id, addedAt: TrackObject.added_at}]}, ...openedSongs.slice(index + 1)])
+                if (
+                    openedSongs
+                        .map((song) => song.id)
+                        .includes(TrackObject.track.id)
+                ) {
+                    const index = openedSongs
+                        .map((song) => song.id)
+                        .indexOf(TrackObject.track.id);
+                    setOpenedSongs((openedSongs) => [
+                        ...openedSongs.slice(0, index),
+                        {
+                            ...TrackObject.track,
+                            playlists: [
+                                ...(openedSongs[index]?.playlists as []),
+                                {
+                                    playlistID: playlist.id,
+                                    addedAt: TrackObject.added_at,
+                                },
+                            ],
+                        },
+                        ...openedSongs.slice(index + 1),
+                    ]);
                 } else {
-                    setOpenedSongs((openedSongs) => [...openedSongs, {...TrackObject.track, playlists:[{playlistID: playlist.id, addedAt: TrackObject.added_at}]}])
+                    setOpenedSongs((openedSongs) => [
+                        ...openedSongs,
+                        {
+                            ...TrackObject.track,
+                            playlists: [
+                                {
+                                    playlistID: playlist.id,
+                                    addedAt: TrackObject.added_at,
+                                },
+                            ],
+                        },
+                    ]);
                 }
-            })
+            });
             setLoading(false);
             setEditorLoading(false);
         },
@@ -74,6 +105,7 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, session }) => {
         songsArray: PlaylistTrackObject[],
         href: string,
     ) => {
+        setEditorLoading(true);
         const { data }: { data: GetPlaylistSongsReturn } = await axios.get(
             href,
             {

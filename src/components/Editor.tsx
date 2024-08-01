@@ -6,24 +6,17 @@ import { OpenedPlaylists } from "./context/PlaylistHistoryContext";
 import { OpenedSongs } from "./context/SongsContext";
 import { ResizablePanel } from "./ui/Resizable";
 import { AlertCircle, Loader2 } from "lucide-react";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "./ui/Table";
-import SongTable from "./SongTable";
-import { columns } from "./Columns";
-import Image from "next/image";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "./ui/Table";
 import { ScrollArea } from "./ui/ScrollArea";
 import SongTableItem from "./SongTableItem";
 import { EditorLoadingContext } from "./context/EditorContext";
+import { Session } from "next-auth";
 
-interface EditorProps {}
+interface EditorProps {
+    session: Session
+}
 
-const Editor: React.FC<EditorProps> = ({}) => {
+const Editor: React.FC<EditorProps> = ({session}) => {
     const { openPlaylists, setOpenPlaylists } = useContext(OpenPlaylists);
     const { playlistHistory, setPlaylistHistory } = useContext(OpenedPlaylists);
     const { openedSongs, setOpenedSongs } = useContext(OpenedSongs);
@@ -78,6 +71,7 @@ const Editor: React.FC<EditorProps> = ({}) => {
                                                 return (
                                                     <SongTableItem
                                                         song={song}
+                                                        session={session}
                                                         key={key}
                                                     />
                                                 );
@@ -95,7 +89,7 @@ const Editor: React.FC<EditorProps> = ({}) => {
                 )}
             </div>
             {editorLoading ? (
-                <div className="absolute z-10 flex h-full w-full items-center justify-center rounded-md bg-background/80 top-0 left-0">
+                <div className="absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center rounded-md bg-background/80">
                     <Loader2 className="animate-spin" />
                 </div>
             ) : (

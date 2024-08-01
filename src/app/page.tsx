@@ -23,7 +23,7 @@ export default async function HomePage() {
                 direction="vertical"
                 className="m-0 h-full w-full space-y-2 p-4 pl-2"
             >
-                <Editor />
+                <Editor session={session} />
                 <ResizableHandle withHandle />
                 <Search />
             </ResizablePanelGroup>
