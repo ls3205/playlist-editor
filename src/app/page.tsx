@@ -25,7 +25,7 @@ export default async function HomePage() {
             >
                 <Editor session={session} />
                 <ResizableHandle withHandle />
-                <Search />
+                <Search session={session} />
             </ResizablePanelGroup>
         </main>
     ) : (

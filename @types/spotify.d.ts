@@ -290,3 +290,15 @@ interface GetPlaylistSongsReturn {
     total: string,
     items: PlaylistTrackObject[]
 }
+
+interface SongsSearchReturn {
+    limit: number,
+    next: string,
+    offset: number,
+    previous: string,
+    total: number,
+    tracks: {
+        href: string,
+        items: Song[]
+    }
+}
