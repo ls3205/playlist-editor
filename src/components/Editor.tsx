@@ -34,6 +34,12 @@ const Editor: React.FC<EditorProps> = ({ session }) => {
             } else {
                 return b.name.localeCompare(a.name);
             }
+        } else if (sortingMode.mode === "artist") {
+            if (sortingMode.dir === "desc") {
+                return a.artists[0]!.name.localeCompare(b.artists[0]!.name);
+            } else {
+                return b.artists[0]!.name.localeCompare(a.artists[0]!.name);
+            }
         } else {
             const aDate = a.playlists.find((playlist) => {
                 return playlist.playlistID === sortingMode.mode;
@@ -68,11 +74,32 @@ const Editor: React.FC<EditorProps> = ({ session }) => {
     };
 
     const handleSortingChange = (itemClicked: string) => {
-        if (itemClicked === sortingMode.mode) {
-            if (sortingMode.dir === "desc") {
-                setSortingMode({ mode: itemClicked, dir: "asc" });
+        if (itemClicked === "alphabetical") {
+            if (
+                sortingMode.mode === "alphabetical" &&
+                sortingMode.dir === "asc"
+            ) {
+                setSortingMode({ mode: "artist", dir: "desc" });
+            } else if (
+                sortingMode.mode === "artist" &&
+                sortingMode.dir === "desc"
+            ) {
+                setSortingMode({ mode: "artist", dir: "asc" });
+            } else if (
+                sortingMode.mode === "artist" &&
+                sortingMode.dir === "asc"
+            ) {
+                setSortingMode({ mode: "alphabetical", dir: "desc" });
+            } else if (sortingMode.mode === "alphabetical" && sortingMode.dir === "desc") {
+                setSortingMode({ mode: "alphabetical", dir: "asc" });
             } else {
-                setSortingMode({ mode: itemClicked, dir: "desc" });
+                setSortingMode({ mode: "alphabetical", dir: "desc" });
+            }
+        } else if (itemClicked === sortingMode.mode) {
+            if (sortingMode.dir === "desc") {
+                setSortingMode({ ...sortingMode, dir: "asc" });
+            } else {
+                setSortingMode({ ...sortingMode, dir: "desc" });
             }
         } else {
             setSortingMode({ mode: itemClicked, dir: "desc" });
@@ -100,9 +127,13 @@ const Editor: React.FC<EditorProps> = ({ session }) => {
                                             }}
                                         >
                                             <h1 className="flex flex-row">
-                                                Song
+                                                {sortingMode.mode === "artist"
+                                                    ? "Artist"
+                                                    : "Song"}
                                                 {sortingMode.mode ===
-                                                "alphabetical" ? (
+                                                    "alphabetical" ||
+                                                sortingMode.mode ===
+                                                    "artist" ? (
                                                     sortingMode.dir ===
                                                     "desc" ? (
                                                         <ChevronDown />

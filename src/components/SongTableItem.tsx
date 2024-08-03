@@ -9,7 +9,7 @@ import { Checkbox } from "./ui/Checkbox";
 import { useMutation } from "@tanstack/react-query";
 import { Session } from "next-auth";
 import axios from "axios";
-import { Loader2 } from "lucide-react";
+import { Loader2, Music } from "lucide-react";
 
 interface SongTableItemProps {
     song: Song;
@@ -17,7 +17,11 @@ interface SongTableItemProps {
     index: number;
 }
 
-const SongTableItem: React.FC<SongTableItemProps> = ({ song, session, index }) => {
+const SongTableItem: React.FC<SongTableItemProps> = ({
+    song,
+    session,
+    index,
+}) => {
     const { openPlaylists, setOpenPlaylists } = useContext(OpenPlaylists);
     const { openedSongs, setOpenedSongs } = useContext(OpenedSongs);
 
@@ -158,21 +162,30 @@ const SongTableItem: React.FC<SongTableItemProps> = ({ song, session, index }) =
     return (
         <TableRow>
             <TableCell className="flex flex-row">
-                <div className="h-full flex justify-center items-center mr-4 min-w-8">
-                    <h1 className="text-neutral-400 text-lg leading-[36px] h-full align-middle">{index + 1}</h1>
+                <div className="mr-4 flex h-full min-w-8 items-center justify-center">
+                    <h1 className="h-full align-middle text-lg leading-[36px] text-neutral-400">
+                        {index + 1}
+                    </h1>
                 </div>
-                <Image
-                    src={song.album.images[1]?.url!}
-                    alt="Playlist Cover"
-                    width={40}
-                    height={40}
-                />
+                {song.album.images[1]?.url ? (
+                    <Image
+                        src={song.album.images[1]?.url!}
+                        alt="Playlist Cover"
+                        width={40}
+                        height={40}
+                    />
+                ) : (
+                    <div className="h-[40px] min-w-[40px]">
+                        <Music className="h-full w-full" />
+                    </div>
+                )}
+
                 <div className="ml-2 flex w-full flex-col overflow-hidden">
                     <h1 className="min-w-0 max-w-[calc(100%)] overflow-hidden text-ellipsis whitespace-nowrap font-semibold">
                         {song.name}
                     </h1>
                     <h3 className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-neutral-400">
-                        {song.artists[0]?.name}
+                        {song.is_local ? "Local File" : song.artists[0]?.name}
                     </h3>
                 </div>
             </TableCell>
