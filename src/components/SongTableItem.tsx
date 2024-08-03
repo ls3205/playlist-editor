@@ -14,9 +14,10 @@ import { Loader2 } from "lucide-react";
 interface SongTableItemProps {
     song: Song;
     session: Session;
+    index: number;
 }
 
-const SongTableItem: React.FC<SongTableItemProps> = ({ song, session }) => {
+const SongTableItem: React.FC<SongTableItemProps> = ({ song, session, index }) => {
     const { openPlaylists, setOpenPlaylists } = useContext(OpenPlaylists);
     const { openedSongs, setOpenedSongs } = useContext(OpenedSongs);
 
@@ -157,6 +158,9 @@ const SongTableItem: React.FC<SongTableItemProps> = ({ song, session }) => {
     return (
         <TableRow>
             <TableCell className="flex flex-row">
+                <div className="h-full flex justify-center items-center mr-4 min-w-8">
+                    <h1 className="text-neutral-400 text-lg leading-[36px] h-full align-middle">{index + 1}</h1>
+                </div>
                 <Image
                     src={song.album.images[1]?.url!}
                     alt="Playlist Cover"

@@ -4,7 +4,7 @@ interface SongsContextProps {
     children: React.ReactNode;
 }
 
-interface OpenSongListType extends Song {
+export interface OpenSongListType extends Song {
     playlists: {
         playlistID: string,
         addedAt: string,

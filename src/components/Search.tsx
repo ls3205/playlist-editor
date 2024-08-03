@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import { ResizablePanel } from "./ui/Resizable";
-import { Input } from "./ui/input";
+import { Input } from "./ui/Input";
 import {
     Select,
     SelectContent,
@@ -10,7 +10,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "./ui/select";
+} from "./ui/Select";
 import { OpenPlaylists } from "./context/PlaylistContext";
 import { OpenedPlaylists } from "./context/PlaylistHistoryContext";
 import { OpenedSongs } from "./context/SongsContext";
@@ -158,12 +158,12 @@ const Search: React.FC<SearchProps> = ({ session }) => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody className="max-h-full">
-                                {searchData.tracks.items.map((song, key) => {
+                                {searchData.tracks.items.map((song, index) => {
                                     return (
                                         <SongTableItem
                                             song={song}
                                             session={session}
-                                            key={key}
+                                            index={index}
                                         />
                                     );
                                 })}
