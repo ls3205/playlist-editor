@@ -36,7 +36,7 @@ const Search: React.FC<SearchProps> = ({ session }) => {
     const [searchData, setSearchData] = useState<
         SongsSearchReturn | undefined
     >();
-    var inputTimer: ReturnType<typeof setTimeout>;
+    let inputTimer: ReturnType<typeof setTimeout>;
 
     const inputTimoutHandler = () => {
         if (inputTimer) {

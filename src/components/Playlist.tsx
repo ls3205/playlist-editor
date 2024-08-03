@@ -32,7 +32,7 @@ const Playlist: React.FC<PlaylistProps> = ({ playlist, session }) => {
             setLoading(true);
             setEditorLoading(true);
 
-            let songs: PlaylistTrackObject[] = [];
+            const songs: PlaylistTrackObject[] = [];
             const { data }: { data: GetPlaylistSongsReturn } = await axios.get(
                 `${playlist.tracks.href}?limit=50`,
                 {
