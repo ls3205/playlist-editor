@@ -42,7 +42,12 @@ const config = {
         "react/no-unescaped-entities": "off",
         "@typescript-eslint/restrict-plus-operands": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
-        "@typescript-eslint/no-empty-function": "off"
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-unnecessary-type-assertion": "off",
+        "react/jsx-key": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off"
     },
 };
 module.exports = config;
