@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
 
 				return token
 
-				//@ts-expect-error
+				// @ts-expect-error unknown type
 			} else if (Date.now() < token.tokenExpires * 1000) {
 				return token
 			} else {
