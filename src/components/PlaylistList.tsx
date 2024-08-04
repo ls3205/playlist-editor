@@ -7,13 +7,19 @@ import { Session } from "next-auth";
 import React from "react";
 import { ScrollArea } from "./ui/ScrollArea";
 import Playlist from "./Playlist";
+import AddPlaylist from "./AddPlaylist";
 
 interface PlaylistListProps {
     session: Session;
 }
 
 const PlaylistList: React.FC<PlaylistListProps> = ({ session }) => {
-    const { data, isLoading, error, refetch } = useQuery({
+    const {
+        data,
+        isLoading,
+        error,
+        refetch: RefetchPlaylists,
+    } = useQuery({
         queryKey: ["GetPlaylists"],
         queryFn: async () => {
             const { data } = await axios.get(
@@ -44,15 +50,18 @@ const PlaylistList: React.FC<PlaylistListProps> = ({ session }) => {
                     </h1>
                 </div>
             ) : (
-                <ScrollArea className="w-auto h-full">
-                    <div className="p-4 w-[351px]">
-                        {
-                            data?.items.map((playlist, key) => {
-                                return (
-                                    <Playlist playlist={playlist} session={session} key={key} />
-                                )
-                            })
-                        }
+                <ScrollArea className="h-full w-auto">
+                    <div className="w-[351px] p-4">
+                        <AddPlaylist refetch={RefetchPlaylists} session={session} />
+                        {data?.items.map((playlist, key) => {
+                            return (
+                                <Playlist
+                                    playlist={playlist}
+                                    session={session}
+                                    key={key}
+                                />
+                            );
+                        })}
                     </div>
                 </ScrollArea>
             )}
