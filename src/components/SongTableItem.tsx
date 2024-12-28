@@ -181,8 +181,10 @@ const SongTableItem: React.FC<SongTableItemProps> = ({
                 )}
 
                 <div className="ml-2 flex w-full flex-col overflow-hidden">
-                    <h1 className="min-w-0 max-w-[calc(100%)] overflow-hidden text-ellipsis whitespace-nowrap font-semibold">
-                        {song.name}
+                    <h1 className="min-w-0 max-w-[calc(100%)] overflow-hidden text-ellipsis whitespace-nowrap font-semibold duration-150 hover:text-primary">
+                        <a href={song.external_urls.spotify} target="_blank">
+                            {song.name}
+                        </a>
                     </h1>
                     <h3 className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-neutral-400">
                         {song.is_local ? "Local File" : song.artists[0]?.name}
